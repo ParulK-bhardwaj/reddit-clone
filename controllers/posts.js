@@ -35,6 +35,7 @@ module.exports = (app) => {
   });
 
   // LOOK UP THE POST
+  // Stretch challenge - async await
   app.get('/posts/:id', async (req, res) => {
     try {
       const post = await Post.findById(req.params.id).lean()
