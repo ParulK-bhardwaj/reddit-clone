@@ -2,10 +2,17 @@ const Post = require('../models/post');
 
 module.exports = (app) => {
 
-    // New
-    app.get('/posts/new', (req, res) => {
-        res.render('posts-new');
-    });
+  // Index
+  // Strecth challenge
+  app.get('/', async (req, res) => {
+    try {
+      const posts = await Post.find({}).lean()
+      return res.render('posts-index', { posts });
+    } 
+    catch (err) {
+      console.log(err.message);
+    }
+  });
 
   // CREATE
   app.post('/posts/new', async (req, res) => {
