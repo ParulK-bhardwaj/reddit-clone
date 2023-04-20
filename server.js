@@ -1,38 +1,34 @@
-import express, { response } from 'express';
-import { engine } from 'express-handlebars';
-// const express = require('express');
 
+// Require Libraries
+const express = require('express');
+const handlebars = require('express-handlebars');
 
+// App Setup
 const app = express();
-// const engine = handlebars();
+app.use(express.static('public'));
 
-app.engine('handlebars', engine());
+// db setup
+require('./data/reddit-db');
+
+// Middleware
+app.engine('handlebars', handlebars.engine({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 app.set('views', './views');
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Require controllers
+require('./controllers/posts')(app)
 
 app.get('/', (req, res) => {
     res.render('home');
 });
 
-// CASES COntroller RESOURCE
-
-// New
-
-app.get('/cases/new', (req, res) => {
-    res.render('cases-new', {});
+// Render the form
+app.get('/posts/new', (req, res) => {
+    res.render('posts-new');
 });
-
-// CREATE
-
-app.post('cases/create', (req, res) => {
-    console.log("OH ho")
-
-    res.redirect('/cases/${caseid}');
-});
-
-// SHOW
-app.get('/cases/:id', (req, res) => {
-    res.render()
-})
 
 app.listen(3000);
+
+module.exports = app;

@@ -1,0 +1,10 @@
+const { Schema, model } = require('mongoose');
+
+// Stretch challenege for timestamp
+const postSchema = new Schema({
+  title: { type: String, required: true },
+  url: { type: String, required: true },
+  summary: { type: String, required: true },
+}, { timestamps: true });
+
+module.exports = model('Post', postSchema);
