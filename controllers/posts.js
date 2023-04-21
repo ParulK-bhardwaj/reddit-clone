@@ -34,11 +34,16 @@ module.exports = (app) => {
     }
   });
 
+  // SHOW
   // LOOK UP THE POST
+  // When we do a reference association, we only save the id's into the parent's document. 
+  // In order to replace these id's with the actual child document, we use the mongoose function .populate() 
+  // when we fetch the parent from the database.
+
   // Stretch challenge - async await
   app.get('/posts/:id', async (req, res) => {
     try {
-      const post = await Post.findById(req.params.id).lean()
+      const post = await Post.findById(req.params.id).lean().populate('comments')
       return res.render('posts-show', { post });
     }
     catch (err) {
