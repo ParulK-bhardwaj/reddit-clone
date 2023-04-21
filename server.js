@@ -1,10 +1,14 @@
+require('dotenv').config();
 
 // Require Libraries
 const express = require('express');
 const handlebars = require('express-handlebars');
 
+const cookieParser = require('cookie-parser');
+
 // App Setup
 const app = express();
+app.use(cookieParser());
 app.use(express.static('public'));
 
 // db setup
@@ -20,6 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 // Require controllers
 require('./controllers/posts')(app)
 require('./controllers/comments.js')(app);
+require('./controllers/auth.js')(app);
 
 app.get('/', (req, res) => {
     res.render('home');
