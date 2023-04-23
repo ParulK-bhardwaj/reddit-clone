@@ -1,4 +1,6 @@
 const Post = require('../models/post');
+const User = require('../models/user');
+const Comment = require('../models/comment');
 
 module.exports = (app) => {
 
@@ -7,7 +9,7 @@ module.exports = (app) => {
   app.get('/', async (req, res) => {
     const currentUser = req.user;
     try {
-      const posts = await Post.find({}).lean()
+      const posts = await Post.find({}).lean().populate('author')
       return res.render('posts-index', { posts, currentUser });
     } 
     catch (err) {
@@ -25,9 +27,15 @@ module.exports = (app) => {
     if (req.user) {
       try 
       {
+        const userId = req.user._id;
         const post = new Post(req.body);
+        post.author = userId;
         await post.save();
-        res.redirect('/');
+        const user = await User.findById(userId);
+        user.posts.unshift(post);
+        await user.save();
+        // REDIRECT TO THE NEW POST
+        return res.redirect(`/posts/${post._id}`);
       }
       catch (err) 
       {
@@ -48,7 +56,7 @@ module.exports = (app) => {
   // Stretch challenge - async await
   app.get('/posts/:id', async (req, res) => {
     try {
-      const post = await Post.findById(req.params.id).lean().populate('comments')
+      const post = await Post.findById(req.params.id).lean().populate('comments').populate('author')
       return res.render('posts-show', { post });
     }
     catch (err) {
@@ -59,7 +67,7 @@ module.exports = (app) => {
 // SUBREDDIT
   app.get('/n/:subreddit', async (req, res) => {
     try {
-      const posts = await Post.find({ subreddit: req.params.subreddit }).lean()
+      const posts = await Post.find({ subreddit: req.params.subreddit }).lean().populate('author')
       return res.render('posts-index', { posts });
     } catch (err) {
       console.log(req.params.subreddit);
