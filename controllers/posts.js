@@ -5,9 +5,10 @@ module.exports = (app) => {
   // Index
   // Strecth challenge
   app.get('/', async (req, res) => {
+    const currentUser = req.user;
     try {
       const posts = await Post.find({}).lean()
-      return res.render('posts-index', { posts });
+      return res.render('posts-index', { posts, currentUser });
     } 
     catch (err) {
       console.log(err.message);
@@ -21,17 +22,21 @@ module.exports = (app) => {
 
   // CREATE
   app.post('/posts/new', async (req, res) => {
-    try 
-    {
-      const post = new Post(req.body);
-      await post.save();
-      res.redirect('/');
+    if (req.user) {
+      try 
+      {
+        const post = new Post(req.body);
+        await post.save();
+        res.redirect('/');
+      }
+      catch (err) 
+      {
+        console.log(err);
+        res.status(500).send('Server error');
+      }
+    } else {
+      return res.status(401); // UNAUTHORIZED
     } 
-    catch (err) 
-    {
-      console.log(err);
-      res.status(500).send('Server error');
-    }
   });
 
   // SHOW
