@@ -8,7 +8,10 @@ module.exports = (app) => {
         // INSTANTIATE INSTANCE OF MODEL
         try 
         {
+            // Creates a new comment object using the data from req.body
             const comment = new Comment(req.body);
+            // sets the author property of the comment object to the _id property of the req.user object.
+            comment.author = req.user._id;
             // SAVE INSTANCE OF Comment MODEL TO DB
             await comment.save()
 
