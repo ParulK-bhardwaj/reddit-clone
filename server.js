@@ -24,6 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // custom middleware
 app.use(checkAuth);
+app.use(express.static('public'));
 
 // Require controllers
 require('./controllers/posts')(app)
