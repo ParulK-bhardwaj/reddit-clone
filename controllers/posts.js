@@ -52,28 +52,27 @@ module.exports = (app) => {
   // When we do a reference association, we only save the id's into the parent's document. 
   // In order to replace these id's with the actual child document, we use the mongoose function .populate() 
   // when we fetch the parent from the database.
-
+  
   // Stretch challenge - async await
   app.get('/posts/:id', async (req, res) => {
+    const currentUser = req.user;
     try {
-      const currentUser = req.user;
-      const post = await Post.findById(req.params.id).lean().populate({ path:'comments', populate: { path: 'author' } }).populate('author')
-      // const post = await Post.findById(req.params.id).lean().populate('comments').populate('author')
+      const post = await Post.findById(req.params.id).populate('comments').lean();
       return res.render('posts-show', { post, currentUser });
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err.message);
     }
   });
 
-// SUBREDDIT
+  // SUBREDDIT
   app.get('/n/:subreddit', async (req, res) => {
+    const { user } = req;
     try {
-      const currentUser = req.user;
-      const posts = await Post.find({ subreddit: req.params.subreddit }).lean().populate('author')
-      return res.render('posts-index', { posts, currentUser });
-    } catch (err) {
-      console.log(req.params.subreddit);
+      const posts = await Post.find({ subreddit: req.params.subreddit }).lean();
+      res.render('posts-index', { posts, user });
+    } 
+    catch (err) {
+      console.log(err.message);
     }
   });
 };

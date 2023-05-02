@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const Populate = require('../util/autopopulate');
 
 // Stretch challenege for timestamp
 // As of Mongoose 4.0 you can now set timestamps options on the Schema and have Mongoose handle the created at and updated at attributes for you. 
@@ -10,5 +11,7 @@ const postSchema = new Schema({
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
+
+
 
 module.exports = model('Post', postSchema);

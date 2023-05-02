@@ -21,10 +21,10 @@ module.exports = (app) => {
             // unshift adds an element to the front of an array.
             // Reddit puts its newest comments at the top, so we want the default order to be reverse chronological order.
             post.comments.unshift(comment);
-            await post.save();
+            await Promise.all([comment.save(), post.save()]);
 
             // REDIRECT TO THE ROOT
-            res.redirect('/');
+            res.redirect(`/posts/${req.params.postId}`);
         }
         catch(err) {
             console.log(err);
